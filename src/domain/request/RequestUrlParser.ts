@@ -2,10 +2,21 @@ import { InvalidContentTypeError, InvalidUrlError } from '../common/utils/error'
 
 class RequestUrlParser {
   static resolveRawUrl(wrappedUrl: string): string {
-    const urlRegex = new RegExp(/\(.+\)/);
+    const urlRegex = new RegExp(/\(https?:\/\/[^)]+\)/);
     const matched = urlRegex.exec(wrappedUrl);
     if (!matched) {
       throw new InvalidUrlError(`Url not found in ${wrappedUrl}`);
+    }
+    const firstMatched = matched[0];
+
+    return firstMatched.substring(1, firstMatched.length - 1);
+  }
+
+  static resolveNoSelectorQuery(wrappedUrl: string): string {
+    const urlRegex = new RegExp(/\(.+\)/);
+    const matched = urlRegex.exec(wrappedUrl);
+    if (!matched) {
+      throw new InvalidUrlError(`Invalid query format ${wrappedUrl}`);
     }
     const firstMatched = matched[0];
 
@@ -23,7 +34,7 @@ class RequestUrlParser {
   }
 
   static resolveSelectionPath(wrappedUrl: string): string {
-    const rawUrl = this.resolveRawUrl(wrappedUrl);
+    const rawUrl = this.resolveNoSelectorQuery(wrappedUrl);
     const pathStartIndex = wrappedUrl.indexOf(rawUrl) + rawUrl.length + 1; // + 1 for bracket char
 
     return wrappedUrl.substr(pathStartIndex);
