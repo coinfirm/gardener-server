@@ -12,22 +12,14 @@ class AxiosAmlDataFetcherAdapter implements DataFetcher {
   async fetch(request: Request): Promise<string> {
     const cryptoType = RequestUrlParser.resolveAmlCryptoType(request.url);
     const address = RequestUrlParser.resolveAmlAddress(request.url);
-    const urlToBeCalled = `${this.baseUrl}/${address}?address_type=${cryptoType}`;
-    console.log(`using url ${urlToBeCalled}`);
-    console.log(`using bearer 'Bearer ${this.bearerToken}'`);
-    const config = {
-      headers: { Authorization: `Bearer ${this.bearerToken}` },
-    };
-    const headers = new Map<string, string>();
-    headers.set('Authorization', `Bearer ${this.bearerToken}`);
 
     try {
-      const {data} = await axios.get(urlToBeCalled, config);
+      const {data} = await axios.get(`${this.baseUrl}/${address}?address_type=${cryptoType}`, {
+        headers: {Authorization: `Bearer ${this.bearerToken}`},
+      });
 
       return data;
     } catch (e) {
-      console.log('headers used:');
-      console.log(e.response.headers);
       throw new HttpError(e.response.statusText, e.response.status);
     }
   }
