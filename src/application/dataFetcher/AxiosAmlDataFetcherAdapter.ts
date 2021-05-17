@@ -10,11 +10,10 @@ class AxiosAmlDataFetcherAdapter implements DataFetcher {
   }
 
   async fetch(request: Request): Promise<string> {
-    const cryptoType = RequestUrlParser.resolveAmlCryptoType(request.url);
-    const address = RequestUrlParser.resolveAmlAddress(request.url);
+    const {crypto, address} = RequestUrlParser.resolveAmlCryptoTypeAndAddress(request.url);
 
     try {
-      const {data} = await axios.get(`${this.baseUrl}/${address}?address_type=${cryptoType}`, {
+      const {data} = await axios.get(`${this.baseUrl}/${address}?address_type=${crypto}`, {
         headers: {Authorization: `Bearer ${this.bearerToken}`},
       });
 

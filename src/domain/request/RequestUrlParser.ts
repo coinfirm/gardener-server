@@ -60,21 +60,11 @@ class RequestUrlParser {
     throw new InvalidContentTypeError('Invalid numeric bounds format');
   }
 
-  static resolveAmlCryptoType(wrappedUrl: string): string {
+  static resolveAmlCryptoTypeAndAddress(wrappedUrl: string): {crypto: string, address: string} {
     const typeRegex = new RegExp(/^aml\((.+),(.+)\)/);
 
     if (typeRegex.test(wrappedUrl)) {
-      return typeRegex.exec(wrappedUrl)[1];
-    }
-
-    throw new InvalidContentTypeError('Invalid AML query. Expected something like aml(ETH,0xdeadbeef)');
-  }
-
-  static resolveAmlAddress(wrappedUrl: string): string {
-    const typeRegex = new RegExp(/^aml\((.+),(.+)\)/);
-
-    if (typeRegex.test(wrappedUrl)) {
-      return typeRegex.exec(wrappedUrl)[2];
+      return {crypto: typeRegex.exec(wrappedUrl)[1], address: typeRegex.exec(wrappedUrl)[2]};
     }
 
     throw new InvalidContentTypeError('Invalid AML query. Expected something like aml(ETH,0xdeadbeef)');
